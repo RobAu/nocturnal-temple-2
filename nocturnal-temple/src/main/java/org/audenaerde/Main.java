@@ -11,6 +11,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -33,6 +34,10 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		BorderPane borderPane = new BorderPane();
+		 Pane wrapperPane = new Pane();
+		    borderPane.setCenter(wrapperPane);
+		    // Put canvas in the center of the window
+		
 
 		// Put menu bar on the top of the window
 		MenuBar menuBar = new MenuBar(new Menu("File"), new Menu("Edit"), new Menu("Help"));
@@ -40,7 +45,7 @@ public class Main extends Application {
 
 		// Put canvas in the center of the window (*)
 		Canvas canvas = new Canvas(400, 400);
-		borderPane.setCenter(canvas);
+		   wrapperPane.getChildren().add(canvas);
 		// Bind the width/height property so that the size of the Canvas will be
 		// resized as the window is resized
 		canvas.widthProperty().bind(borderPane.widthProperty());
@@ -53,7 +58,7 @@ public class Main extends Application {
 			@Override
 			public void handle(long arg0) {
 				GraphicsContext gc = canvas.getGraphicsContext2D();
-				drawShapes(gc);
+				drawShapes(gc, canvas.getWidth(), canvas.getHeight());
 			}
 		};
 		Scene s = new Scene(borderPane, 850, 450);
@@ -62,20 +67,20 @@ public class Main extends Application {
 
 			@Override
 			public void handle(MouseEvent arg0) {
-				mx = (int) arg0.getSceneX();
-				my = (int) arg0.getSceneY();
+				mx = (int) arg0.getX();
+				my = (int) arg0.getY();
 			}
 		};
-		s.setOnMouseMoved(movedHandler);
+		canvas.setOnMouseMoved(movedHandler);
 		primaryStage.setScene(s);
 		primaryStage.show();
 
 		timer.start();
 	}
 
-	private void drawShapes(GraphicsContext gc) {
+	private void drawShapes(GraphicsContext gc, double cw, double ch) {
 
-		gc.clearRect(0, 0, 400, 400);
+		gc.clearRect(0, 0, cw, ch);
 		gc.drawImage(image, 0, 0);
 		gc.setStroke(Color.BLUE);
 		gc.setLineWidth(2);

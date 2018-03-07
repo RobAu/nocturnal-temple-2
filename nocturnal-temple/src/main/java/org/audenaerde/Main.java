@@ -2,16 +2,20 @@ package org.audenaerde;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -52,6 +56,23 @@ public class Main extends Application {
 		MenuBar menuBar = new MenuBar(fileMenu, new Menu("Edit"), new Menu("Help"));
 		borderPane.setTop(menuBar);
 
+		FlowPane flow = new FlowPane();
+		flow.setPrefWidth(300);
+		flow.setVgap(8);
+		flow.setHgap(4);
+		flow.setPrefWrapLength(300); // preferred width = 300
+
+		
+		for (int i = 0; i < 10; i++) {
+			ImageView iv3 = new ImageView();
+			iv3.setImage(image);
+			Rectangle2D viewportRect = new Rectangle2D(32*i, 32, 32, 32);
+			iv3.setViewport(viewportRect);
+			flow.getChildren().add(new Button(String.valueOf(i), iv3));
+		}
+
+		borderPane.setLeft(flow);
+
 		// Put canvas in the center of the window (*)
 		Canvas canvas1 = new Canvas(400, 400);
 		wrapperPane.getChildren().add(canvas1);
@@ -71,36 +92,42 @@ public class Main extends Application {
 		// };
 		Scene s = new Scene(borderPane, 850, 450);
 
+		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
+			switch (event.getCode()) {
+			case DIGIT1:
+				if (event.isControlDown())
+					System.out.println("Set 1 to tile");
+				;
+				break;
+
+			case UP:
+				event.consume();
+				ty--;
+				break;
+
+			case LEFT:
+				event.consume();
+				tx--;
+				break;
+
+			case RIGHT:
+				event.consume();
+				tx++;
+				break;
+
+			case DOWN:
+				event.consume();
+				ty++;
+				break;
+			}
+
+			GraphicsContext gc = canvas1.getGraphicsContext2D();
+
+			drawShapes(gc, canvas1.getWidth(), canvas1.getHeight());
+		});
 		s.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				switch (event.getCode()) {
-				case DIGIT1:
-					if (event.isControlDown())
-						System.out.println("Set 1 to tile");
-					;
-					break;
-
-				case UP:
-					ty--;
-					break;
-
-				case LEFT:
-					tx--;
-					break;
-
-				case RIGHT:
-					tx++;
-					break;
-
-				case DOWN:
-					ty++;
-					break;
-				}
-
-				GraphicsContext gc = canvas1.getGraphicsContext2D();
-
-				drawShapes(gc, canvas1.getWidth(), canvas1.getHeight());
 			}
 		});
 
@@ -126,6 +153,8 @@ public class Main extends Application {
 		canvas1.setOnMousePressed(e -> setTile(currentTile));
 		primaryStage.setScene(s);
 		primaryStage.show();
+
+		drawShapes(gc, canvas1.getWidth(), canvas1.getHeight());
 
 		// timer.start();
 	}

@@ -33,13 +33,16 @@ public class Main extends Application {
 	Image image = new Image(getClass().getResourceAsStream("/PathAndObjects.png"));
 
 	Canvas mainMap;
-	
+	Canvas sourceTiles;
+
 	int tileSize = 32;
 
 	int mx = 0;
 	int my = 0;
 	int tx = (mx / tileSize);
 	int ty = (my / tileSize);
+	int sx = (mx / tileSize);
+	int sy = (my / tileSize);
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -59,29 +62,28 @@ public class Main extends Application {
 		borderPane.setTop(menuBar);
 
 		BorderPane leftPane = new BorderPane();
-		
-		
+
 		FlowPane flow = new FlowPane();
 		flow.setPrefWidth(300);
 		flow.setVgap(8);
 		flow.setHgap(4);
 		flow.setPrefWrapLength(300); // preferred width = 300
 
+		sourceTiles = new Canvas(512, 512);
+
 		leftPane.setTop(flow);
-		
+		leftPane.setCenter(sourceTiles);
+
 		for (int i = 0; i < 10; i++) {
 			ImageView iv3 = new ImageView();
 			iv3.setImage(image);
-			Rectangle2D viewportRect = new Rectangle2D(32*i, 32, 32, 32);
+			Rectangle2D viewportRect = new Rectangle2D(32 * i, 32, 32, 32);
 			iv3.setViewport(viewportRect);
 			flow.getChildren().add(new Button(String.valueOf(i), iv3));
 		}
 
 		borderPane.setLeft(leftPane);
 
-		Canvas sourceTiles = new Canvas();
-		
-		
 		// Put canvas in the center of the window (*)
 		mainMap = new Canvas(400, 400);
 		wrapperPane.getChildren().add(mainMap);
@@ -155,6 +157,20 @@ public class Main extends Application {
 
 			}
 		};
+		EventHandler<MouseEvent> sourceMovedHandler = new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				GraphicsContext gc = mainMap.getGraphicsContext2D();
+				mx = (int) arg0.getX();
+				my = (int) arg0.getY();
+				sx = (mx / tileSize);
+				sy = (my / tileSize);
+				updateCanvases();
+
+			}
+		};
+		sourceTiles.setOnMouseMoved(sourceMovedHandler);
 		mainMap.setOnMouseMoved(movedHandler);
 		Object currentTile = null;
 		mainMap.setOnMousePressed(e -> setTile(currentTile));
@@ -172,17 +188,26 @@ public class Main extends Application {
 	}
 
 	private void updateCanvases() {
-
-		GraphicsContext gc = mainMap.getGraphicsContext2D();
-		double cw =  mainMap.getWidth(); 
-		double ch = mainMap.getHeight();
-		gc.clearRect(0, 0, cw, ch);
-		gc.drawImage(image, 0, 0);
-		gc.drawImage(image, 32, 32, 32, 32, 400, 0, 32, 32);
-		gc.setStroke(Color.BLUE);
-		gc.setLineWidth(2);
-		gc.strokeRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
-
+		{
+			GraphicsContext gc = mainMap.getGraphicsContext2D();
+			double cw = mainMap.getWidth();
+			double ch = mainMap.getHeight();
+		
+			gc.clearRect(0, 0, cw, ch);
+			gc.setStroke(Color.BLUE);
+			gc.setLineWidth(2);
+			gc.strokeRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
+		}
+		{
+			GraphicsContext gc = sourceTiles.getGraphicsContext2D();
+			double cw = sourceTiles.getWidth();
+			double ch = sourceTiles.getHeight();
+			gc.clearRect(0, 0, cw, ch);
+			gc.drawImage(image, 0, 0);
+			gc.setStroke(Color.BLUE);
+			gc.setLineWidth(2);
+			gc.strokeRect(sx * tileSize, sy * tileSize, tileSize, tileSize);
+		}
 	}
 
 	public static void main(String[] args) {

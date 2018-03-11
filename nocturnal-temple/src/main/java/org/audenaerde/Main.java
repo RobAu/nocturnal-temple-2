@@ -1,5 +1,8 @@
 package org.audenaerde;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +15,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -32,9 +36,13 @@ public class Main extends Application {
 	 */
 	Image image = new Image(getClass().getResourceAsStream("/PathAndObjects.png"));
 
+	BigMap bigMap = new BigMap();
+
 	Canvas mainMap;
 	Canvas sourceTiles;
-
+	
+	List<Tile> hotTiles = new ArrayList<>();
+	List<ImageView> viewPorts = new ArrayList<>();
 	int tileSize = 32;
 
 	int mx = 0;
@@ -74,12 +82,20 @@ public class Main extends Application {
 		leftPane.setTop(flow);
 		leftPane.setCenter(sourceTiles);
 
+	
 		for (int i = 0; i < 10; i++) {
+			hotTiles.add(new Tile(i,0));
+		}
+		int index=0;
+		
+		for (Tile t : hotTiles) {
 			ImageView iv3 = new ImageView();
 			iv3.setImage(image);
-			Rectangle2D viewportRect = new Rectangle2D(32 * i, 32, 32, 32);
+			Rectangle2D viewportRect = new Rectangle2D(32 * t.tx, 32*t.ty, 32, 32);
+			viewPorts.add(iv3);
 			iv3.setViewport(viewportRect);
-			flow.getChildren().add(new Button(String.valueOf(i), iv3));
+			
+			flow.getChildren().add(new Button(String.valueOf(index++), iv3));
 		}
 
 		borderPane.setLeft(leftPane);
@@ -105,10 +121,28 @@ public class Main extends Application {
 
 		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
 			switch (event.getCode()) {
+			case DIGIT0:
 			case DIGIT1:
+			case DIGIT2:
+			case DIGIT3:
+			case DIGIT4:
+			case DIGIT5:
+			case DIGIT6:
+			case DIGIT7:
+			case DIGIT8:
+			case DIGIT9:
+				int digit = event.getCode().getCode() - KeyCode.DIGIT0.getCode();
 				if (event.isControlDown())
-					System.out.println("Set 1 to tile");
-				;
+				{
+					hotTiles.set(digit, new Tile(sx,sy));
+					Rectangle2D rect = new Rectangle2D(32 * sx, 32*sy, 32, 32);
+					viewPorts.get(digit).setViewport(rect);
+					//
+//					System.out.println("Set 1 to tile");
+				}
+				else {
+					bigMap.setTile(tx, ty, hotTiles.get(digit));
+				}
 				break;
 
 			case UP:
@@ -192,8 +226,9 @@ public class Main extends Application {
 			GraphicsContext gc = mainMap.getGraphicsContext2D();
 			double cw = mainMap.getWidth();
 			double ch = mainMap.getHeight();
-		
+
 			gc.clearRect(0, 0, cw, ch);
+			bigMap.drawTo(gc);
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(2);
 			gc.strokeRect(tx * tileSize, ty * tileSize, tileSize, tileSize);

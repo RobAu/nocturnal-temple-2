@@ -95,7 +95,7 @@ public abstract class GameCharacter {
 		int ty = 0;
 		if (action == Action.REST) {
 			tx = 0;
-			ty =  CHARACTER_TILE_SIZE *( d.getRow());;
+			ty = CHARACTER_TILE_SIZE *(8+ d.getRow());
 		} else if (action == Action.SLASH) {
 			tx = CHARACTER_TILE_SIZE * slashCycle;
 			ty = CHARACTER_TILE_SIZE * (12 + d.getRow());

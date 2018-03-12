@@ -1,5 +1,6 @@
 package org.audenaerde;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import tiled.core.Map;
+import tiled.io.TMXMapReader;
 
 /**
  * Hello world!
@@ -43,6 +47,9 @@ public class Main extends Application {
 	 */
 	Image image = new Image(getClass().getResourceAsStream("/PathAndObjects.png"));
 
+	URL soundSourceResource = getClass().getResource("/knife-slash.wav");
+	AudioClip plonkSound = new AudioClip(soundSourceResource.toExternalForm());
+	
 	BigMap bigMap = new BigMap();
 
 	Canvas mainMap;
@@ -67,6 +74,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
+		plonkSound.setBalance(0.5);
 		BorderPane borderPane = new BorderPane();
 		Pane wrapperPane = new Pane();
 		borderPane.setCenter(wrapperPane);
@@ -193,6 +201,10 @@ public class Main extends Application {
 			case SPACE:
 				event.consume();
 				curCharacter.setAction(Action.SLASH);
+				
+				//play slash sound
+				plonkSound.play();
+				 
 				break;
 			}
 			curCharacter.nextCycle();
@@ -304,7 +316,10 @@ public class Main extends Application {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		
+		
+		
 		launch(args);
 	}
 }

@@ -8,7 +8,7 @@ import org.audenaerde.Main;
 import javafx.scene.image.Image;
 
 public class Skeleton extends GameCharacter {
-	static Image image = new Image(Main.class.getResourceAsStream("/png/walkcycle/BODY_skeleton.png"));
+	static Image image = new Image(Main.class.getResourceAsStream("/body/male/skeleton.png"));
 
 	static List<Image> images = new ArrayList<>();
 	
@@ -16,15 +16,10 @@ public class Skeleton extends GameCharacter {
 	{
 		images.add(image);
 	}
-	
-	@Override
-	public List<Image> getWalkImages() {
-		// TODO Auto-generated method stub
-		return images;
-	}
+
 
 	@Override
-	public List<Image> getSlashImages() {
+	public List<Image> getImages() {
 		return images;
 	}
 

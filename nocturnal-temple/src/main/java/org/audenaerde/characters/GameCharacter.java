@@ -39,7 +39,7 @@ public abstract class GameCharacter {
 	int lx = 100;
 	int ly = 100;
 
-	public abstract List<Image> getWalkImages();
+	public abstract List<Image> getImages();
 
 	public void nextCycle() {
 
@@ -91,37 +91,27 @@ public abstract class GameCharacter {
 	}
 
 	public void draw(GraphicsContext gc) {
-
+		int tx = 0;
+		int ty = 0;
 		if (action == Action.REST) {
-			for (Image i : getRestImages()) {
-				int ty = CHARACTER_TILE_SIZE * d.getRow();
-
-				gc.drawImage(i, 0, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
-						CHARACTER_TILE_SIZE);
-			}
-		}
-		if (action == Action.WALK) {
-			for (Image i : getWalkImages()) {
-				int tx = CHARACTER_TILE_SIZE * walkCycle;
-				int ty = CHARACTER_TILE_SIZE * d.getRow();
-
-				gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
-						CHARACTER_TILE_SIZE);
-			}
+			tx = 0;
+			ty =  CHARACTER_TILE_SIZE *( d.getRow());;
 		} else if (action == Action.SLASH) {
-			for (Image i : getSlashImages()) {
-				int tx = CHARACTER_TILE_SIZE * slashCycle;
-				int ty = CHARACTER_TILE_SIZE * d.getRow();
-				gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
-						CHARACTER_TILE_SIZE);
-			}
+			tx = CHARACTER_TILE_SIZE * slashCycle;
+			ty = CHARACTER_TILE_SIZE * (12 + d.getRow());
+		} else if (action == Action.WALK) {
+			tx = CHARACTER_TILE_SIZE * walkCycle;
+			ty =  CHARACTER_TILE_SIZE *(8+ d.getRow());
 		}
+
+		for (Image i : getImages()) {
+
+			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
+					CHARACTER_TILE_SIZE);
+		}
+
+	
 	}
 
-	private List<Image> getRestImages() {
-		return getWalkImages();
-	}
-
-	public abstract List<Image> getSlashImages();
 
 }

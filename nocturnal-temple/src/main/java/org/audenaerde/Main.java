@@ -3,6 +3,12 @@ package org.audenaerde;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.audenaerde.characters.GameCharacter;
+import org.audenaerde.characters.GameCharacter.Direction;
+import org.audenaerde.characters.Man;
+import org.audenaerde.characters.Skeleton;
+
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
@@ -40,6 +46,13 @@ public class Main extends Application {
 
 	Canvas mainMap;
 	Canvas sourceTiles;
+	
+	public static int cycle = 0;
+	
+	Skeleton sk = new Skeleton();
+	Man man = new Man ();
+	
+
 	
 	List<Tile> hotTiles = new ArrayList<>();
 	List<ImageView> viewPorts = new ArrayList<>();
@@ -82,21 +95,26 @@ public class Main extends Application {
 		leftPane.setTop(flow);
 		leftPane.setCenter(sourceTiles);
 
-	
 		for (int i = 0; i < 10; i++) {
-			hotTiles.add(new Tile(i,0));
+			hotTiles.add(new Tile(i, 0));
 		}
-		int index=0;
-		
+		int index = 0;
+
 		for (Tile t : hotTiles) {
 			ImageView iv3 = new ImageView();
 			iv3.setImage(image);
-			Rectangle2D viewportRect = new Rectangle2D(32 * t.tx, 32*t.ty, 32, 32);
+			Rectangle2D viewportRect = new Rectangle2D(32 * t.tx, 32 * t.ty, 32, 32);
 			viewPorts.add(iv3);
 			iv3.setViewport(viewportRect);
-			
 			flow.getChildren().add(new Button(String.valueOf(index++), iv3));
 		}
+		hotTiles.add(new Tile(0, 0));
+		ImageView iv3 = new ImageView();
+		iv3.setImage(image);
+		Rectangle2D viewportRect = new Rectangle2D(32, 32, 32, 32);
+		viewPorts.add(iv3);
+		iv3.setViewport(viewportRect);
+		flow.getChildren().add(new Button(String.valueOf("Mouse"), iv3));
 
 		borderPane.setLeft(leftPane);
 
@@ -120,6 +138,8 @@ public class Main extends Application {
 		Scene s = new Scene(borderPane, 850, 450);
 
 		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
+			
+			GameCharacter curCharacter = man;
 			switch (event.getCode()) {
 			case DIGIT0:
 			case DIGIT1:
@@ -132,39 +152,42 @@ public class Main extends Application {
 			case DIGIT8:
 			case DIGIT9:
 				int digit = event.getCode().getCode() - KeyCode.DIGIT0.getCode();
-				if (event.isControlDown())
-				{
-					hotTiles.set(digit, new Tile(sx,sy));
-					Rectangle2D rect = new Rectangle2D(32 * sx, 32*sy, 32, 32);
+				if (event.isControlDown()) {
+					hotTiles.set(digit, new Tile(sx, sy));
+					Rectangle2D rect = new Rectangle2D(32 * sx, 32 * sy, 32, 32);
 					viewPorts.get(digit).setViewport(rect);
 					//
-//					System.out.println("Set 1 to tile");
-				}
-				else {
+					// System.out.println("Set 1 to tile");
+				} else {
 					bigMap.setTile(tx, ty, hotTiles.get(digit));
 				}
 				break;
 
 			case UP:
 				event.consume();
+				curCharacter.setDirection(Direction.UP);
 				ty--;
 				break;
 
 			case LEFT:
 				event.consume();
+				curCharacter.setDirection(Direction.LEFT);
 				tx--;
 				break;
 
 			case RIGHT:
 				event.consume();
+				curCharacter.setDirection(Direction.RIGHT);
 				tx++;
 				break;
 
 			case DOWN:
 				event.consume();
+				curCharacter.setDirection(Direction.DOWN);
 				ty++;
 				break;
 			}
+			curCharacter.nextCycle();
 
 			updateCanvases();
 		});
@@ -207,21 +230,28 @@ public class Main extends Application {
 		sourceTiles.setOnMouseMoved(sourceMovedHandler);
 		mainMap.setOnMouseMoved(movedHandler);
 		Object currentTile = null;
-		mainMap.setOnMousePressed(e -> setTile(currentTile));
+		mainMap.setOnMousePressed(e-> setTile(hotTiles.get(10) ));
 		primaryStage.setScene(s);
 		primaryStage.show();
 
+		AnimationTimer timer = new AnimationTimer() {
+			
+			@Override
+			public void handle(long arg0) {
+				updateCanvases();
+			}
+		};
 		updateCanvases();
 
-		// timer.start();
 	}
 
-	private Object setTile(Object currentTile) {
-		System.out.println("Setting tile");
-		return null;
+	private void setTile(Tile currentTile) {
+		bigMap.setTile(tx, ty, currentTile); //10 == mouse
+		updateCanvases();
 	}
 
 	private void updateCanvases() {
+		
 		{
 			GraphicsContext gc = mainMap.getGraphicsContext2D();
 			double cw = mainMap.getWidth();
@@ -232,6 +262,9 @@ public class Main extends Application {
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(2);
 			gc.strokeRect(tx * tileSize, ty * tileSize, tileSize, tileSize);
+
+			this.sk.draw(gc);
+			this.man.draw(gc);
 		}
 		{
 			GraphicsContext gc = sourceTiles.getGraphicsContext2D();
@@ -242,7 +275,9 @@ public class Main extends Application {
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(2);
 			gc.strokeRect(sx * tileSize, sy * tileSize, tileSize, tileSize);
+			
 		}
+		
 	}
 
 	public static void main(String[] args) {

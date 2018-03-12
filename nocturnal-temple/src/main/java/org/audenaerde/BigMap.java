@@ -12,7 +12,7 @@ public class BigMap {
 	public BigMap() {
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				tiles[x][y] = new Tile(1, 1);
+				tiles[x][y] = new Tile(1, 11);
 			}
 		}
 	}

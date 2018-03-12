@@ -23,6 +23,11 @@ public class Skeleton extends GameCharacter {
 		return images;
 	}
 
+	@Override
+	public List<Image> getSlashImages() {
+		return images;
+	}
+
 
 
 

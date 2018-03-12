@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.audenaerde.characters.GameCharacter;
+import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.GameCharacter.Direction;
 import org.audenaerde.characters.Man;
 import org.audenaerde.characters.Skeleton;
@@ -46,14 +47,12 @@ public class Main extends Application {
 
 	Canvas mainMap;
 	Canvas sourceTiles;
-	
-	public static int cycle = 0;
-	
-	Skeleton sk = new Skeleton();
-	Man man = new Man ();
-	
 
-	
+	public static int cycle = 0;
+
+	Skeleton sk = new Skeleton();
+	Man man = new Man();
+
 	List<Tile> hotTiles = new ArrayList<>();
 	List<ImageView> viewPorts = new ArrayList<>();
 	int tileSize = 32;
@@ -137,9 +136,9 @@ public class Main extends Application {
 		// };
 		Scene s = new Scene(borderPane, 850, 450);
 
+		GameCharacter curCharacter = man;
 		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
-			
-			GameCharacter curCharacter = man;
+
 			switch (event.getCode()) {
 			case DIGIT0:
 			case DIGIT1:
@@ -186,6 +185,11 @@ public class Main extends Application {
 				curCharacter.setDirection(Direction.DOWN);
 				ty++;
 				break;
+
+			case SPACE:
+				event.consume();
+				curCharacter.setAction(Action.SLASH);
+				break;
 			}
 			curCharacter.nextCycle();
 
@@ -194,6 +198,7 @@ public class Main extends Application {
 		s.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+
 			}
 		});
 
@@ -230,28 +235,43 @@ public class Main extends Application {
 		sourceTiles.setOnMouseMoved(sourceMovedHandler);
 		mainMap.setOnMouseMoved(movedHandler);
 		Object currentTile = null;
-		mainMap.setOnMousePressed(e-> setTile(hotTiles.get(10) ));
+		mainMap.setOnMousePressed(e -> setTile(hotTiles.get(10)));
 		primaryStage.setScene(s);
 		primaryStage.show();
 
 		AnimationTimer timer = new AnimationTimer() {
+			long last = -1;
+			int framecounter =0;
 			
 			@Override
 			public void handle(long arg0) {
-				updateCanvases();
+
+				// init
+				if (last == -1) {
+					last = arg0;
+				} else {
+					if (arg0 - last > 50_000_000) // 20 ms
+					{
+						System.out.println(framecounter++);
+						curCharacter.nextCycle();
+						updateCanvases();
+						last = arg0;
+					}
+				}
+
 			}
 		};
 		updateCanvases();
-
+		timer.start();
 	}
 
 	private void setTile(Tile currentTile) {
-		bigMap.setTile(tx, ty, currentTile); //10 == mouse
+		bigMap.setTile(tx, ty, currentTile); // 10 == mouse
 		updateCanvases();
 	}
 
 	private void updateCanvases() {
-		
+
 		{
 			GraphicsContext gc = mainMap.getGraphicsContext2D();
 			double cw = mainMap.getWidth();
@@ -275,9 +295,9 @@ public class Main extends Application {
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(2);
 			gc.strokeRect(sx * tileSize, sy * tileSize, tileSize, tileSize);
-			
+
 		}
-		
+
 	}
 
 	public static void main(String[] args) {

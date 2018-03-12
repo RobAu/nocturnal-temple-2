@@ -13,6 +13,7 @@ public class Man extends GameCharacter {
 	
 	static Image image_slash     = new Image(Main.class.getResourceAsStream("/png/slash/BODY_human.png"));
 	static Image image_slash_legs= new Image(Main.class.getResourceAsStream("/png/slash/LEGS_pants_greenish.png"));
+	static Image image_slash_dagger= new Image(Main.class.getResourceAsStream("/png/slash/WEAPON_dagger.png"));
 
 	static List<Image> images = new ArrayList<>();
 	static List<Image> images_slash = new ArrayList<>();
@@ -23,6 +24,7 @@ public class Man extends GameCharacter {
 		images.add(image_legs);
 		images_slash.add(image_slash);
 		images_slash.add(image_slash_legs);
+		images_slash.add(image_slash_dagger);
 	}
 	@Override
 	public List<Image> getWalkImages() {
@@ -34,5 +36,6 @@ public class Man extends GameCharacter {
 		return images_slash;
 	}
 
+	
 	
 }

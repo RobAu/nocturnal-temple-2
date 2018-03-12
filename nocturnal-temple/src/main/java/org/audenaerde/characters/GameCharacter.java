@@ -79,6 +79,10 @@ public abstract class GameCharacter {
 			slashCycle = 0;
 			this.action = Action.SLASH;
 		}
+		if (action != Action.WALK && a == Action.WALK) {
+			walkCycle = 1;
+			this.action = Action.WALK;
+		}
 	}
 
 	public void setDirection(Direction newDirection) {

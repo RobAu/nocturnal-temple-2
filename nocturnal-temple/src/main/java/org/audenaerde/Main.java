@@ -164,24 +164,28 @@ public class Main extends Application {
 
 			case UP:
 				event.consume();
+				curCharacter.setAction(Action.WALK);
 				curCharacter.setDirection(Direction.UP);
 				ty--;
 				break;
 
 			case LEFT:
 				event.consume();
+				curCharacter.setAction(Action.WALK);
 				curCharacter.setDirection(Direction.LEFT);
 				tx--;
 				break;
 
 			case RIGHT:
 				event.consume();
+				curCharacter.setAction(Action.WALK);
 				curCharacter.setDirection(Direction.RIGHT);
 				tx++;
 				break;
 
 			case DOWN:
 				event.consume();
+				curCharacter.setAction(Action.WALK);
 				curCharacter.setDirection(Direction.DOWN);
 				ty++;
 				break;
@@ -241,8 +245,8 @@ public class Main extends Application {
 
 		AnimationTimer timer = new AnimationTimer() {
 			long last = -1;
-			int framecounter =0;
-			
+			int framecounter = 0;
+
 			@Override
 			public void handle(long arg0) {
 

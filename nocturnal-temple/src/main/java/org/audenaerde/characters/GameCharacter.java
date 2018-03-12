@@ -13,7 +13,7 @@ public abstract class GameCharacter {
 	private static final int CHARACTER_TILE_SIZE = 64;
 
 	public enum Action {
-		REST, WALK, SLASH
+		REST, WALK, SLASH, WALK_IN_PLACE;
 	};
 
 	public enum Direction {
@@ -36,6 +36,14 @@ public abstract class GameCharacter {
 	private int walkCycle = 1;
 	private int slashCycle = 0;
 
+	public int getLx() {
+		return lx;
+	}
+
+	public int getLy() {
+		return ly;
+	}
+
 	int lx = 100;
 	int ly = 100;
 
@@ -43,9 +51,9 @@ public abstract class GameCharacter {
 
 	public void nextCycle() {
 
-		if (action == Action.WALK) {
+		if (action == Action.WALK || action == Action.WALK_IN_PLACE) {
 			walkCycle = (walkCycle % 8) + 1;
-			int pixelsPerStep = 4;
+			int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
 
 			switch (d) {
 			case DOWN:
@@ -83,6 +91,10 @@ public abstract class GameCharacter {
 			walkCycle = 1;
 			this.action = Action.WALK;
 		}
+		if (action != Action.WALK_IN_PLACE && a == Action.WALK_IN_PLACE) {
+			walkCycle = 1;
+			this.action = Action.WALK_IN_PLACE;
+		}
 	}
 
 	public void setDirection(Direction newDirection) {
@@ -99,7 +111,7 @@ public abstract class GameCharacter {
 		} else if (action == Action.SLASH) {
 			tx = CHARACTER_TILE_SIZE * slashCycle;
 			ty = CHARACTER_TILE_SIZE * (12 + d.getRow());
-		} else if (action == Action.WALK) {
+		} else if (action == Action.WALK  || action == Action.WALK_IN_PLACE) {
 			tx = CHARACTER_TILE_SIZE * walkCycle;
 			ty =  CHARACTER_TILE_SIZE *(8+ d.getRow());
 		}
@@ -108,6 +120,7 @@ public abstract class GameCharacter {
 
 			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
 					CHARACTER_TILE_SIZE);
+			
 		}
 
 	

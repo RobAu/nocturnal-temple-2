@@ -7,20 +7,21 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import tiled.core.Map;
+import tiled.core.Tile;
 import tiled.core.TileLayer;
 import tiled.io.TMXMapReader;
 
 public class BigMap {
 
 	int w = 32;
-	int h = 32;
+	int h = 20;
 	Map testMap;
 
 	java.util.Map<Integer, Image> tileCache= new HashMap<>();
 	
 	public BigMap() {
 		try {
-			testMap = new TMXMapReader().readMap("/home/raudenaerde/test.tmx");
+			testMap = new TMXMapReader().readMap("src/main/resources/test.tmx");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -32,7 +33,7 @@ public class BigMap {
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++) {
 				TileLayer later = (TileLayer) testMap.getLayer(0);
-				tiled.core.Tile t = later.getTileAt(x, y);
+				Tile t = later.getTileAt(x, y);
 				
 				Image image = tileCache.get(t.getId());
 				if (image == null)
@@ -46,7 +47,5 @@ public class BigMap {
 			}
 	}
 
-	public void setTile(int x, int y, Tile tile) {
-
-	}
+	
 }

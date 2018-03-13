@@ -35,6 +35,6 @@ public class Man extends GameCharacter {
 
 	public void draw(GraphicsContext gc) {
 		super.draw(gc);
-		System.out.println(getCollisionBox(lx, ly));
+//		System.out.println(getCollisionBox(lx, ly));
 	}
 }

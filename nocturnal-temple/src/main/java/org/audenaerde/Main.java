@@ -1,16 +1,10 @@
 package org.audenaerde;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import org.audenaerde.characters.Dummy;
 import org.audenaerde.characters.GameCharacter;
 import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.GameCharacter.Direction;
-import org.audenaerde.characters.Man;
-import org.audenaerde.characters.Skeleton;
 import org.audenaerde.gamestate.GameState;
 
 import javafx.animation.AnimationTimer;
@@ -22,7 +16,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -41,8 +34,7 @@ public class Main extends Application {
 	 * https://opengameart.org/content/rpg-tiles-cobble-stone-paths-town-objects
 	 */
 
-	URL soundSourceResource = getClass().getResource("/knife-slash.wav");
-	AudioClip plonkSound = new AudioClip(soundSourceResource.toExternalForm());
+	
 
 	GameState gameState = new GameState();
 	
@@ -63,7 +55,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		plonkSound.setBalance(0.5);
+	
 		BorderPane borderPane = new BorderPane();
 		Pane wrapperPane = new Pane();
 		borderPane.setCenter(wrapperPane);
@@ -79,7 +71,7 @@ public class Main extends Application {
 		borderPane.setTop(menuBar);
 
 		// Put canvas in the center of the window (*)
-		mainMap = new Canvas(400, 400);
+		mainMap = new Canvas(640, 480);
 		wrapperPane.getChildren().add(mainMap);
 		// Bind the width/height property so that the size of the Canvas will be
 		// resized as the window is resized
@@ -95,7 +87,7 @@ public class Main extends Application {
 		//
 		// }
 		// };
-		Scene s = new Scene(borderPane, 850, 450);
+		Scene s = new Scene(borderPane, 640, 480+30);
 		
 		
 
@@ -136,12 +128,15 @@ public class Main extends Application {
 				event.consume();
 				gameState.getDebug().toggleCollisionBoxes();
 				break;
+			case T:
+				event.consume();
+				gameState.getDebug().toggleTerrain();
+				break;
 			case SPACE:
 				event.consume();
 				curCharacter.setAction(Action.SLASH);
 				
-				//play slash sound
-				plonkSound.play();
+		
 				 
 				break;
 			}
@@ -198,7 +193,7 @@ public class Main extends Application {
 				} else {
 					if (arg0 - last > 50_000_000) // 20 ms
 					{
-						System.out.println(framecounter++);
+//						System.out.println(framecounter++);
 						gameState.nextCycle();
 						updateCanvases();
 						last = arg0;

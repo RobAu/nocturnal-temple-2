@@ -13,8 +13,8 @@ import tiled.io.TMXMapReader;
 
 public class BigMap {
 
-	int w = 32;
-	int h = 20;
+	int width;
+	int height ;
 	Map testMap;
 
 	java.util.Map<Integer, Image> tileCache= new HashMap<>();
@@ -22,6 +22,8 @@ public class BigMap {
 	public BigMap() {
 		try {
 			testMap = new TMXMapReader().readMap("src/main/resources/test.tmx");
+			width = testMap.getWidth() ;
+			height = testMap.getHeight();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -30,8 +32,8 @@ public class BigMap {
 	}
 
 	public void drawTo(GraphicsContext gc) {
-		for (int y = 0; y < h; y++)
-			for (int x = 0; x < w; x++) {
+		for (int y = 0; y < height; y++)
+			for (int x = 0; x < width; x++) {
 				TileLayer later = (TileLayer) testMap.getLayer(0);
 				Tile t = later.getTileAt(x, y);
 				

@@ -20,7 +20,7 @@ public class GameState {
 	BigMap bigMap = new BigMap();
 	List<GameCharacter> allCharacters;
 
-	Rectangle2D screenBox = new Rectangle2D(0, 0, 640, 400);
+	Rectangle2D screenBox = new Rectangle2D(0, 0, 640, 480);
 
 	GameCharacter skeleton = new Skeleton(this);
 	GameCharacter man = new Man(this);
@@ -41,7 +41,10 @@ public class GameState {
 
 	public void drawTo(GraphicsContext gc) {
 
-		bigMap.drawTo(gc);
+		if (debug.isTerrain())
+		{
+			bigMap.drawTo(gc);
+		}
 		Collections.sort(allCharacters, (a, b) -> a.getLy() - b.getLy());
 		for (GameCharacter c : allCharacters) {
 			c.draw(gc);

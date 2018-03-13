@@ -1,16 +1,25 @@
 package org.audenaerde.characters;
 
+import java.net.URL;
 import java.util.List;
 
+import org.audenaerde.Main;
 import org.audenaerde.gamestate.GameState;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 
 public abstract class GameCharacter {
 
+	static URL soundSourceResource = Main.class.getResource("/knife-slash.wav");
+	static AudioClip slashSound = new AudioClip(soundSourceResource.toExternalForm());
+	static {
+		slashSound.setBalance(0.5);
+		
+	}
 	private static final int CHARACTER_TILE_SIZE = 64;
 
 	public enum Action {
@@ -87,6 +96,8 @@ public abstract class GameCharacter {
 			}
 		}
 		if (action == Action.SLASH) {
+		
+			
 			slashCycle++;
 
 			if (slashCycle == 6) {
@@ -108,6 +119,10 @@ public abstract class GameCharacter {
 		if (action != Action.SLASH && a == Action.SLASH) {
 			slashCycle = 0;
 			this.action = Action.SLASH;
+			
+			//play slash sound
+			slashSound.play();
+			
 		}
 		if (action != Action.WALK && a == Action.WALK) {
 			walkCycle = 1;
@@ -129,6 +144,14 @@ public abstract class GameCharacter {
 	}
 
 	public void draw(GraphicsContext gc) {
+
+		maybeDrawCollisionBox(gc);
+
+		drawSpriteImages(gc);
+
+	}
+
+	private void drawSpriteImages(GraphicsContext gc) {
 		int tx = 0;
 		int ty = 0;
 		if (action == Action.REST) {
@@ -143,12 +166,13 @@ public abstract class GameCharacter {
 		}
 
 		for (Image i : getImages()) {
-
 			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
 					CHARACTER_TILE_SIZE);
 
 		}
+	}
 
+	private void maybeDrawCollisionBox(GraphicsContext gc) {
 		if (state.getDebug().getCollisionBoxes()) {
 			// draw bounding box as well
 			gc.setStroke(Color.BLUE);

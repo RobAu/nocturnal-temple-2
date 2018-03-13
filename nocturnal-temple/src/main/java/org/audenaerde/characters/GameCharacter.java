@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.List;
 
 import org.audenaerde.Main;
+import org.audenaerde.attacks.Attack;
+import org.audenaerde.attacks.SlashAttack;
 import org.audenaerde.gamestate.GameState;
 
 import javafx.geometry.Rectangle2D;
@@ -12,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 
-public abstract class GameCharacter {
+public abstract class GameCharacter implements GameObject {
 
 	static URL soundSourceResource = Main.class.getResource("/knife-slash.wav");
 	static AudioClip slashSound = new AudioClip(soundSourceResource.toExternalForm());
@@ -100,7 +102,7 @@ public abstract class GameCharacter {
 			
 			slashCycle++;
 
-			if (slashCycle == 6) {
+			if (slashCycle == SlashAttack.LENGTH) {
 				slashCycle = 0;
 				action = Action.REST;
 			}
@@ -122,6 +124,8 @@ public abstract class GameCharacter {
 			
 			//play slash sound
 			slashSound.play();
+			
+			state.addAttack(new SlashAttack(this));
 			
 		}
 		if (action != Action.WALK && a == Action.WALK) {
@@ -183,8 +187,12 @@ public abstract class GameCharacter {
 		}
 	}
 
-	public Rectangle2D getCurrentBox() {
+	public Rectangle2D getCurrentCollisionBox() {
 		return getCollisionBox(lx, ly);
+	}
+
+	public Direction getDirection() {
+		return d;
 	}
 
 }

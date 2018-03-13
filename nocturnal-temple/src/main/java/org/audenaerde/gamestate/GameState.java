@@ -2,11 +2,13 @@ package org.audenaerde.gamestate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.audenaerde.BigMap;
+import org.audenaerde.attacks.Attack;
 import org.audenaerde.characters.Dummy;
 import org.audenaerde.characters.GameCharacter;
 import org.audenaerde.characters.Man;
@@ -19,6 +21,7 @@ public class GameState {
 
 	BigMap bigMap = new BigMap();
 	List<GameCharacter> allCharacters;
+	List<Attack> attacks;
 
 	Rectangle2D screenBox = new Rectangle2D(0, 0, 640, 480);
 
@@ -33,6 +36,7 @@ public class GameState {
 
 	public GameState() {
 
+		attacks  = new ArrayList<>();
 		allCharacters = new ArrayList<>();
 		allCharacters.add(man);
 		allCharacters.add(skeleton);
@@ -49,6 +53,10 @@ public class GameState {
 		for (GameCharacter c : allCharacters) {
 			c.draw(gc);
 		}
+		for (Attack attack : attacks)
+		{
+			attack.draw(gc);
+		}
 
 	}
 
@@ -57,6 +65,19 @@ public class GameState {
 	}
 
 	public void nextCycle() {
+		
+		Iterator<Attack> it = attacks.iterator();
+		while (it.hasNext())
+		{
+			Attack a = it.next();
+			a.nextCycle();
+			if (a.endOfLife())
+			{
+				it.remove();
+			}
+		}
+		
+		
 		for (GameCharacter c : allCharacters) {
 			c.nextCycle();
 		}
@@ -72,7 +93,7 @@ public class GameState {
 		
 		for (GameCharacter o: others)
 		{
-			if (newPosColBox.intersects(o.getCurrentBox()))
+			if (newPosColBox.intersects(o.getCurrentCollisionBox()))
 					{
 				return true;
 					}
@@ -83,6 +104,10 @@ public class GameState {
 	public Debug getDebug() {
 		// TODO Auto-generated method stub
 		return this.debug;
+	}
+
+	public void addAttack(Attack attack) {
+		this.attacks.add(attack);
 	}
 
 }

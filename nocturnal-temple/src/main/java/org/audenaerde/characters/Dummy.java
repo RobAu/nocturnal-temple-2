@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.audenaerde.Main;
+import org.audenaerde.gamestate.GameState;
 
 import javafx.scene.image.Image;
 
@@ -16,7 +17,8 @@ public class Dummy extends GameCharacter {
 		images.add(image);
 	}
 
-	public Dummy() {
+	public Dummy(GameState state) {
+		super(state);
 		lx=200;
 		ly=200;
 	}

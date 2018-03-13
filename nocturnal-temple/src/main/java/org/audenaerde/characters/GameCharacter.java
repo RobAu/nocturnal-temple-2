@@ -2,8 +2,12 @@ package org.audenaerde.characters;
 
 import java.util.List;
 
+import org.audenaerde.gamestate.GameState;
+
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public abstract class GameCharacter {
 
@@ -32,6 +36,12 @@ public abstract class GameCharacter {
 	Direction d = Direction.UP;
 	private int walkCycle = 1;
 	private int slashCycle = 0;
+
+	GameState state;
+
+	public GameCharacter(GameState state) {
+		this.state = state;
+	}
 
 	public int getLx() {
 		return lx;
@@ -71,8 +81,7 @@ public abstract class GameCharacter {
 				break;
 
 			}
-			if (isValid(nx, ny))
-			{
+			if (isValid(nx, ny)) {
 				lx = nx;
 				ly = ny;
 			}
@@ -89,8 +98,10 @@ public abstract class GameCharacter {
 	}
 
 	private boolean isValid(int nx, int ny) {
-	
-		return true;
+
+		Rectangle2D colbox = getCollisionBox(nx, ny);
+		return state.getScreenBox().contains(colbox) && !state.collidesWithOthers(this, colbox);
+
 	}
 
 	public void setAction(Action a) {
@@ -111,6 +122,10 @@ public abstract class GameCharacter {
 	public void setDirection(Direction newDirection) {
 		d = newDirection;
 
+	}
+
+	public Rectangle2D getCollisionBox(int px, int py) {
+		return new Rectangle2D(px + 16, py + 32, 64 - 16 * 2, 64 - 32);
 	}
 
 	public void draw(GraphicsContext gc) {
@@ -134,6 +149,18 @@ public abstract class GameCharacter {
 
 		}
 
+		if (state.getDebug().getCollisionBoxes()) {
+			// draw bounding box as well
+			gc.setStroke(Color.BLUE);
+			gc.setLineWidth(2);
+
+			Rectangle2D cbox = getCollisionBox(lx, ly);
+			gc.strokeRect(cbox.getMinX(), cbox.getMinY(), cbox.getWidth(), cbox.getHeight());
+		}
+	}
+
+	public Rectangle2D getCurrentBox() {
+		return getCollisionBox(lx, ly);
 	}
 
 }

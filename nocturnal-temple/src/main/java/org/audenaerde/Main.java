@@ -132,6 +132,10 @@ public class Main extends Application {
 				ty++;
 				break;
 
+			case B:
+				event.consume();
+				gameState.getDebug().toggleCollisionBoxes();
+				break;
 			case SPACE:
 				event.consume();
 				curCharacter.setAction(Action.SLASH);

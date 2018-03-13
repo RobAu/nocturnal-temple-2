@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.audenaerde.Main;
+import org.audenaerde.gamestate.GameState;
 
 import javafx.scene.image.Image;
 
 public class Skeleton extends GameCharacter {
+
+
 	static Image image = new Image(Main.class.getResourceAsStream("/body/male/skeleton.png"));
 
 	static List<Image> images = new ArrayList<>();
@@ -15,7 +18,11 @@ public class Skeleton extends GameCharacter {
 	static {
 		images.add(image);
 	}
-
+	
+	public Skeleton(GameState state) {
+		super(state);
+	}
+	
 	@Override
 	public List<Image> getImages() {
 		return images;
@@ -37,7 +44,7 @@ public class Skeleton extends GameCharacter {
 		{
 			setDirection(Direction.DOWN);
 		}
-		if (ly>400)
+		if (ly>250)
 		{
 			setDirection(Direction.UP);
 		}

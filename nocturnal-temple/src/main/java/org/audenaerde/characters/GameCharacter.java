@@ -2,9 +2,6 @@ package org.audenaerde.characters;
 
 import java.util.List;
 
-import org.audenaerde.Main;
-import org.audenaerde.characters.GameCharacter.Direction;
-
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -55,20 +52,29 @@ public abstract class GameCharacter {
 			walkCycle = (walkCycle % 8) + 1;
 			int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
 
+			// we need to check if we can actually go there
+			int nx = lx;
+			int ny = ly;
+
 			switch (d) {
 			case DOWN:
-				ly += pixelsPerStep;
+				ny += pixelsPerStep;
 				break;
 			case LEFT:
-				lx -= pixelsPerStep;
+				nx -= pixelsPerStep;
 				break;
 			case RIGHT:
-				lx += pixelsPerStep;
+				nx += pixelsPerStep;
 				break;
 			case UP:
-				ly -= pixelsPerStep;
+				ny -= pixelsPerStep;
 				break;
 
+			}
+			if (isValid(nx, ny))
+			{
+				lx = nx;
+				ly = ny;
 			}
 		}
 		if (action == Action.SLASH) {
@@ -80,6 +86,11 @@ public abstract class GameCharacter {
 			}
 		}
 
+	}
+
+	private boolean isValid(int nx, int ny) {
+	
+		return true;
 	}
 
 	public void setAction(Action a) {
@@ -107,24 +118,22 @@ public abstract class GameCharacter {
 		int ty = 0;
 		if (action == Action.REST) {
 			tx = 0;
-			ty = CHARACTER_TILE_SIZE *(8+ d.getRow());
+			ty = CHARACTER_TILE_SIZE * (8 + d.getRow());
 		} else if (action == Action.SLASH) {
 			tx = CHARACTER_TILE_SIZE * slashCycle;
 			ty = CHARACTER_TILE_SIZE * (12 + d.getRow());
-		} else if (action == Action.WALK  || action == Action.WALK_IN_PLACE) {
+		} else if (action == Action.WALK || action == Action.WALK_IN_PLACE) {
 			tx = CHARACTER_TILE_SIZE * walkCycle;
-			ty =  CHARACTER_TILE_SIZE *(8+ d.getRow());
+			ty = CHARACTER_TILE_SIZE * (8 + d.getRow());
 		}
 
 		for (Image i : getImages()) {
 
 			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
 					CHARACTER_TILE_SIZE);
-			
+
 		}
 
-	
 	}
-
 
 }

@@ -11,6 +11,7 @@ import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.GameCharacter.Direction;
 import org.audenaerde.characters.Man;
 import org.audenaerde.characters.Skeleton;
+import org.audenaerde.gamestate.GameState;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -39,20 +40,16 @@ public class Main extends Application {
 	 * See:
 	 * https://opengameart.org/content/rpg-tiles-cobble-stone-paths-town-objects
 	 */
-	Image image = new Image(getClass().getResourceAsStream("/PathAndObjects.png"));
 
 	URL soundSourceResource = getClass().getResource("/knife-slash.wav");
 	AudioClip plonkSound = new AudioClip(soundSourceResource.toExternalForm());
+
+	GameState gameState = new GameState();
 	
-	BigMap bigMap = new BigMap();
-	List<GameCharacter> allCharacters;
 	Canvas mainMap;
 
 	public static int cycle = 0;
 
-	GameCharacter skeleton = new Skeleton();
-	GameCharacter  man = new Man();
-	GameCharacter dummy= new Dummy();
 	
 	int tileSize = 32;
 
@@ -89,7 +86,7 @@ public class Main extends Application {
 		mainMap.widthProperty().bind(borderPane.widthProperty());
 		mainMap.heightProperty().bind(borderPane.heightProperty());
 
-		primaryStage.setTitle("Hello World!");
+		primaryStage.setTitle("Game thingie");
 
 		// AnimationTimer timer = new AnimationTimer() {
 		//
@@ -100,12 +97,9 @@ public class Main extends Application {
 		// };
 		Scene s = new Scene(borderPane, 850, 450);
 		
-		allCharacters = new ArrayList<>();
-		allCharacters.add(man);
-		allCharacters.add(skeleton);
-		allCharacters.add(dummy);
+		
 
-		GameCharacter curCharacter = man;
+		GameCharacter curCharacter = gameState.getCurrentCharacter();
 		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
 
 			switch (event.getCode()) {
@@ -201,10 +195,7 @@ public class Main extends Application {
 					if (arg0 - last > 50_000_000) // 20 ms
 					{
 						System.out.println(framecounter++);
-						for (GameCharacter c : allCharacters)
-						{
-							c.nextCycle();
-						}
+						gameState.nextCycle();
 						updateCanvases();
 						last = arg0;
 					}
@@ -224,14 +215,7 @@ public class Main extends Application {
 			double cw = mainMap.getWidth();
 			double ch = mainMap.getHeight();
 
-			bigMap.drawTo(gc);
-			Collections.sort(allCharacters, (a,b) -> a.getLy() - b.getLy());
-			for (GameCharacter c : allCharacters)
-			{
-				//sort by y value.
-				
-				c.draw(gc);
-			}
+			gameState.drawTo(gc);
 
 		}
 		

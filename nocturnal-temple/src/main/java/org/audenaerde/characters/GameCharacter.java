@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.List;
 
 import org.audenaerde.Main;
-import org.audenaerde.attacks.Attack;
 import org.audenaerde.attacks.SlashAttack;
 import org.audenaerde.gamestate.GameState;
 
@@ -47,6 +46,7 @@ public abstract class GameCharacter implements GameObject {
 	Direction d = Direction.UP;
 	private int walkCycle = 1;
 	private int slashCycle = 0;
+	private int hitCycle = 0;
 
 	GameState state;
 
@@ -69,6 +69,13 @@ public abstract class GameCharacter implements GameObject {
 
 	public void nextCycle() {
 
+		if (action == Action.WALK_IN_PLACE)
+		{
+			if (walkCycle == 8)
+			{
+				action = Action.REST;
+			}
+		}
 		if (action == Action.WALK || action == Action.WALK_IN_PLACE) {
 			walkCycle = (walkCycle % 8) + 1;
 			int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
@@ -193,6 +200,10 @@ public abstract class GameCharacter implements GameObject {
 
 	public Direction getDirection() {
 		return d;
+	}
+
+	public GameState getGameState() {
+		return state;
 	}
 
 }

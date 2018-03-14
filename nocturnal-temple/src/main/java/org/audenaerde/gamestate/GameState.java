@@ -11,6 +11,7 @@ import org.audenaerde.BigMap;
 import org.audenaerde.attacks.Attack;
 import org.audenaerde.characters.Dummy;
 import org.audenaerde.characters.GameCharacter;
+import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.Man;
 import org.audenaerde.characters.Skeleton;
 
@@ -66,6 +67,29 @@ public class GameState {
 
 	public void nextCycle() {
 		
+		updateAttacks();
+		
+		
+		for (GameCharacter c : allCharacters) {
+
+			//check if hit by an attack?
+			for (Attack a : attacks)
+			{
+				if (a.getCurrentCollisionBox().intersects(c.getCurrentCollisionBox()))
+				{
+					if (a.getOwner() != c)
+					{
+						c.setAction(Action.WALK_IN_PLACE);
+					}
+				}
+			}
+			
+			c.nextCycle();
+		}
+
+	}
+
+	private void updateAttacks() {
 		Iterator<Attack> it = attacks.iterator();
 		while (it.hasNext())
 		{
@@ -76,12 +100,6 @@ public class GameState {
 				it.remove();
 			}
 		}
-		
-		
-		for (GameCharacter c : allCharacters) {
-			c.nextCycle();
-		}
-
 	}
 
 	public Rectangle2D getScreenBox() {

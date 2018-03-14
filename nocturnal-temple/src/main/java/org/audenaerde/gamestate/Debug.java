@@ -3,6 +3,8 @@ package org.audenaerde.gamestate;
 public class Debug {
 
 	private boolean cboxes = false;
+	private boolean aboxes = false;
+
 	private boolean terrain = true;
 	
 	public boolean isTerrain() {
@@ -22,6 +24,13 @@ public class Debug {
 
 	public boolean getCollisionBoxes() {
 		return cboxes;
+	}
+	public void toggleAttackBoxes() {
+		this.aboxes = !this.aboxes;
+	}
+
+	public boolean getAttackBoxes() {
+		return aboxes;
 	}
 	
 }

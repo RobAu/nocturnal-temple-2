@@ -21,6 +21,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 /**
@@ -34,15 +36,12 @@ public class Main extends Application {
 	 * https://opengameart.org/content/rpg-tiles-cobble-stone-paths-town-objects
 	 */
 
-	
-
 	GameState gameState = new GameState();
-	
+
 	Canvas mainMap;
 
 	public static int cycle = 0;
 
-	
 	int tileSize = 32;
 
 	int mx = 0;
@@ -51,11 +50,16 @@ public class Main extends Application {
 	int ty = (my / tileSize);
 	int sx = (mx / tileSize);
 	int sy = (my / tileSize);
+	MediaPlayer player;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-	
+		URL backgroudMusic = Main.class.getResource("/prisonwalls.mp3");
+		Media media = new Media(backgroudMusic.toExternalForm()); // replace /Movies/test.mp3 with your file
+		player = new MediaPlayer(media);
+		player.play();
+
 		BorderPane borderPane = new BorderPane();
 		Pane wrapperPane = new Pane();
 		borderPane.setCenter(wrapperPane);
@@ -87,15 +91,13 @@ public class Main extends Application {
 		//
 		// }
 		// };
-		Scene s = new Scene(borderPane, 640, 480+30);
-		
-		
+		Scene s = new Scene(borderPane, 640, 480 + 30);
 
 		GameCharacter curCharacter = gameState.getCurrentCharacter();
 		s.addEventFilter(KeyEvent.KEY_PRESSED, (event) -> {
 
 			switch (event.getCode()) {
-			
+
 			case UP:
 				event.consume();
 				curCharacter.setAction(Action.WALK);
@@ -132,17 +134,18 @@ public class Main extends Application {
 				event.consume();
 				gameState.getDebug().toggleTerrain();
 				break;
+			case A:
+				event.consume();
+				gameState.getDebug().toggleAttackBoxes();
+				break;
 			case SPACE:
 				event.consume();
 				curCharacter.setAction(Action.SLASH);
-				
-		
-				 
+
 				break;
 			}
-		
+
 		});
-		
 
 		GraphicsContext gc = mainMap.getGraphicsContext2D();
 
@@ -176,7 +179,7 @@ public class Main extends Application {
 		};
 		mainMap.setOnMouseMoved(movedHandler);
 		Object currentTile = null;
-	
+
 		primaryStage.setScene(s);
 		primaryStage.show();
 
@@ -191,9 +194,9 @@ public class Main extends Application {
 				if (last == -1) {
 					last = arg0;
 				} else {
-					if (arg0 - last > 50_000_000) // 20 ms
+					if (arg0 - last > 50_000_000) // 50 ms
 					{
-//						System.out.println(framecounter++);
+						// System.out.println(framecounter++);
 						gameState.nextCycle();
 						updateCanvases();
 						last = arg0;
@@ -206,7 +209,6 @@ public class Main extends Application {
 		timer.start();
 	}
 
-	
 	private void updateCanvases() {
 
 		{
@@ -217,14 +219,11 @@ public class Main extends Application {
 			gameState.drawTo(gc);
 
 		}
-		
 
 	}
 
 	public static void main(String[] args) throws Exception {
-		
-		
-		
+
 		launch(args);
 	}
 }

@@ -3,18 +3,16 @@ package org.audenaerde.attacks;
 import org.audenaerde.characters.GameCharacter;
 
 import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 public class SlashAttack extends Attack {
 
 	public final static int LENGTH = 6;
 	
-	int width=15;
+	int width=17;
 	int height=20;
 	
-	public SlashAttack(GameCharacter gameCharacter) {
-		super(gameCharacter);
+	public SlashAttack( GameCharacter gameCharacter) {
+		super( gameCharacter);
 		
 		initPos(gameCharacter);
 
@@ -25,7 +23,7 @@ public class SlashAttack extends Attack {
 		Rectangle2D bbox = gameCharacter.getCurrentCollisionBox();
 		switch (gameCharacter.getDirection()) {
 		case DOWN:
-			lx = (int) (bbox.getMinX() + width);
+			lx = (int) (bbox.getMaxX() - width + 4);
 			ly = (int) bbox.getMaxY()-height/2;
 			break;
 		case LEFT:
@@ -37,7 +35,7 @@ public class SlashAttack extends Attack {
 			ly = (int) bbox.getMinY();
 			break;
 		case UP:
-			lx = (int) (bbox.getMaxX() - width);
+			lx = (int) (bbox.getMaxX() - width +4);
 			ly = (int) bbox.getMinY()-height;
 			break;
 		}
@@ -49,15 +47,6 @@ public class SlashAttack extends Attack {
 		return new Rectangle2D(lx, ly, width, height);
 	}
 
-	@Override
-	public void draw(GraphicsContext gc) {
-		
-		gc.setStroke(Color.RED);
-		gc.setLineWidth(2);
-
-		Rectangle2D cbox = getCurrentCollisionBox();
-		gc.strokeRect(cbox.getMinX(), cbox.getMinY(), cbox.getWidth(), cbox.getHeight());
-	}
 
 	@Override
 	protected int getMaxCycles() {

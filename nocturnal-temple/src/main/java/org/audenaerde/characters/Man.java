@@ -13,7 +13,8 @@ public class Man extends GameCharacter {
 	static Image image = new Image(Main.class.getResourceAsStream("/body/male/light.png"));
 	static Image image_legs = new Image(Main.class.getResourceAsStream("/legs/pants/male/red_pants_male.png"));
 	static Image image_dagger = new Image(Main.class.getResourceAsStream("/weapons/right hand/male/dagger_male.png"));
-
+	static Image image_hood = new Image(Main.class.getResourceAsStream("/head/hoods/male/cloth_hood_male.png"));
+	
 	static List<Image> images = new ArrayList<>();
 	static List<Image> images_slash = new ArrayList<>();
 
@@ -21,6 +22,7 @@ public class Man extends GameCharacter {
 		images.add(image);
 		images.add(image_legs);
 		images.add(image_dagger);
+//		images.add(image_hood);
 	}
 
 	public Man(GameState state) {

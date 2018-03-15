@@ -7,6 +7,7 @@ import java.util.List;
 import org.audenaerde.Main;
 import org.audenaerde.gamestate.GameState;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 
@@ -31,6 +32,9 @@ public class Dummy extends GameCharacter {
 	
 		lx=200;
 		ly=200;
+	}
+	public Rectangle2D getCollisionBox(int px, int py) {
+		return new Rectangle2D(px + 12, py + 48, 64 - 12 * 2, 16);
 	}
 	
 	@Override

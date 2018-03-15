@@ -19,7 +19,7 @@ public abstract class GameCharacter implements GameObject {
 	static AudioClip slashSound = new AudioClip(soundSourceResource.toExternalForm());
 	static {
 		slashSound.setBalance(0.5);
-		
+
 	}
 	private static final int CHARACTER_TILE_SIZE = 64;
 
@@ -69,10 +69,8 @@ public abstract class GameCharacter implements GameObject {
 
 	public void nextCycle() {
 
-		if (action == Action.WALK_IN_PLACE)
-		{
-			if (walkCycle == 8)
-			{
+		if (action == Action.WALK_IN_PLACE) {
+			if (walkCycle == 8) {
 				action = Action.REST;
 			}
 		}
@@ -105,8 +103,11 @@ public abstract class GameCharacter implements GameObject {
 			}
 		}
 		if (action == Action.SLASH) {
-		
-			
+
+			// small delay for animation
+			if (slashCycle == 1)
+				state.addAttack(new SlashAttack(this));
+
 			slashCycle++;
 
 			if (slashCycle == SlashAttack.LENGTH) {
@@ -128,12 +129,10 @@ public abstract class GameCharacter implements GameObject {
 		if (action != Action.SLASH && a == Action.SLASH) {
 			slashCycle = 0;
 			this.action = Action.SLASH;
-			
-			//play slash sound
+
+			// play slash sound
 			slashSound.play();
-			
-			state.addAttack(new SlashAttack(this));
-			
+
 		}
 		if (action != Action.WALK && a == Action.WALK) {
 			walkCycle = 1;
@@ -151,7 +150,7 @@ public abstract class GameCharacter implements GameObject {
 	}
 
 	public Rectangle2D getCollisionBox(int px, int py) {
-		return new Rectangle2D(px + 16, py + 32, 64 - 16 * 2, 64 - 32);
+		return new Rectangle2D(px + 16, py + 48, 64 - 16 * 2, 16);
 	}
 
 	public void draw(GraphicsContext gc) {
@@ -204,6 +203,12 @@ public abstract class GameCharacter implements GameObject {
 
 	public GameState getGameState() {
 		return state;
+	}
+
+	public GameCharacter setPos(int newLx, int newLy) {
+		lx = newLx;
+		ly = newLy;
+		return this;
 	}
 
 }

@@ -28,7 +28,6 @@ public class GameState {
 
 	GameCharacter skeleton = new Skeleton(this);
 	GameCharacter man = new Man(this);
-	GameCharacter dummy = new Dummy(this);
 
 	GameCharacter curCharacter = man;
 	int tileSize = 32;
@@ -41,7 +40,10 @@ public class GameState {
 		allCharacters = new ArrayList<>();
 		allCharacters.add(man);
 		allCharacters.add(skeleton);
-		allCharacters.add(dummy);
+		allCharacters.add( new Dummy(this).setPos(200,140));
+		allCharacters.add( new Dummy(this).setPos(200,200));
+		allCharacters.add( new Dummy(this).setPos(200,260));
+		allCharacters.add( new Dummy(this).setPos(200,320));
 	}
 
 	public void drawTo(GraphicsContext gc) {

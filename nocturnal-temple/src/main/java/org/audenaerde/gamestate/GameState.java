@@ -11,6 +11,7 @@ import org.audenaerde.BigMap;
 import org.audenaerde.attacks.Attack;
 import org.audenaerde.characters.Dummy;
 import org.audenaerde.characters.GameCharacter;
+import org.audenaerde.characters.GameObject;
 import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.Man;
 import org.audenaerde.characters.Skeleton;
@@ -52,10 +53,17 @@ public class GameState {
 		{
 			bigMap.drawTo(gc);
 		}
-		Collections.sort(allCharacters, (a, b) -> a.getLy() - b.getLy());
-		for (GameCharacter c : allCharacters) {
+		
+		List<GameObject> drawables = new ArrayList<GameObject>();
+		
+		drawables.addAll(allCharacters);
+		drawables.addAll(bigMap.getNonTerrainTiles());
+		
+		Collections.sort(drawables, (a, b) -> (int) (a.getDrawOrderIndex() - b.getDrawOrderIndex()));
+		for (GameObject c : drawables) {
 			c.draw(gc);
 		}
+		
 		for (Attack attack : attacks)
 		{
 			attack.draw(gc);

@@ -211,4 +211,8 @@ public abstract class GameCharacter implements GameObject {
 		return this;
 	}
 
+	public int getDrawOrderIndex()
+	{
+		return (int) getCurrentCollisionBox().getMaxY();
+	}
 }

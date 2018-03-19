@@ -9,4 +9,6 @@ public interface GameObject {
 	public void draw(GraphicsContext gc);
 	
 	public void nextCycle() ;
+	
+	public int getDrawOrderIndex();
 }

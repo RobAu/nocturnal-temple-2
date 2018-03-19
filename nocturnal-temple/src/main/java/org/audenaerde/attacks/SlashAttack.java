@@ -46,7 +46,10 @@ public class SlashAttack extends Attack {
 	public Rectangle2D getCurrentCollisionBox() {
 		return new Rectangle2D(lx, ly, width, height);
 	}
-
+	public int getDrawOrderIndex()
+	{
+		return (int) getCurrentCollisionBox().getMaxY();
+	}
 
 	@Override
 	protected int getMaxCycles() {

@@ -198,7 +198,7 @@ public class Main extends Application {
 				if (last == -1) {
 					last = arg0;
 				} else {
-					if (arg0 - last > 50_000_000) // 50 ms
+					if (arg0 - last > 33_000_000) // 50 ms
 					{
 						// System.out.println(framecounter++);
 						gameState.nextCycle();

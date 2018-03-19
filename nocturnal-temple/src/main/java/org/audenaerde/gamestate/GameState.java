@@ -15,6 +15,7 @@ import org.audenaerde.characters.GameObject;
 import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.characters.Man;
 import org.audenaerde.characters.Skeleton;
+import org.audenaerde.effects.AmountHit;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -24,6 +25,7 @@ public class GameState {
 	BigMap bigMap = new BigMap(this);
 	List<GameCharacter> allCharacters;
 	List<Attack> attacks;
+	List<AmountHit> hits;
 
 	Rectangle2D screenBox = new Rectangle2D(0, 0, 640, 480);
 
@@ -32,41 +34,45 @@ public class GameState {
 
 	GameCharacter curCharacter = man;
 	int tileSize = 32;
-	
+
 	private Debug debug = new Debug();
 
 	public GameState() {
 
-		attacks  = new ArrayList<>();
+		hits = new ArrayList<>();
+		attacks = new ArrayList<>();
 		allCharacters = new ArrayList<>();
 		allCharacters.add(man.setPos(100, 200));
 		allCharacters.add(skeleton.setPos(100, 300));
-		allCharacters.add( new Dummy(this).setPos(200,140));
-		allCharacters.add( new Dummy(this).setPos(200,200));
-		allCharacters.add( new Dummy(this).setPos(200,260));
-		allCharacters.add( new Dummy(this).setPos(200,320));
+		allCharacters.add(new Dummy(this).setPos(200, 140));
+		allCharacters.add(new Dummy(this).setPos(200, 200));
+		allCharacters.add(new Dummy(this).setPos(200, 260));
+		allCharacters.add(new Dummy(this).setPos(200, 320));
+
 	}
 
 	public void drawTo(GraphicsContext gc) {
 
-		if (debug.isTerrain())
-		{
+		if (debug.isTerrain()) {
 			bigMap.drawTo(gc);
 		}
-		
+
 		List<GameObject> drawables = new ArrayList<GameObject>();
-		
+
 		drawables.addAll(allCharacters);
 		drawables.addAll(bigMap.getNonTerrainTiles());
-		
+
 		Collections.sort(drawables, (a, b) -> (int) (a.getDrawOrderIndex() - b.getDrawOrderIndex()));
 		for (GameObject c : drawables) {
 			c.draw(gc);
 		}
-		
-		for (Attack attack : attacks)
-		{
+
+		for (Attack attack : attacks) {
 			attack.draw(gc);
+		}
+
+		for (AmountHit amountHit : hits) {
+			amountHit.draw(gc);
 		}
 
 	}
@@ -76,37 +82,50 @@ public class GameState {
 	}
 
 	public void nextCycle() {
-		
+
 		updateAttacks();
-		
-		
+
 		for (GameCharacter c : allCharacters) {
 
-			//check if hit by an attack?
-			for (Attack a : attacks)
-			{
-				if (a.getCurrentCollisionBox().intersects(c.getCurrentCollisionBox()))
-				{
-					if (a.getOwner() != c)
-					{
+			// check if hit by an attack?
+			for (Attack a : attacks) {
+				if (a.getCurrentCollisionBox().intersects(c.getCurrentCollisionBox())) {
+					if (a.getOwner() != c) {
+						
+						if (c.getAction() != Action.WALK_IN_PLACE)
+							hits.add(new AmountHit(this, c));
+
 						c.setAction(Action.WALK_IN_PLACE);
+
 					}
 				}
 			}
-			
+
 			c.nextCycle();
+		}
+
+		updateEffects();
+
+	}
+
+	private void updateEffects() {
+
+		for (Iterator<AmountHit> amountHit = hits.iterator(); amountHit.hasNext();) {
+			AmountHit hit = amountHit.next();
+			hit.nextCycle();
+			if (hit.endOfLife()) {
+				amountHit.remove();
+			}
 		}
 
 	}
 
 	private void updateAttacks() {
 		Iterator<Attack> it = attacks.iterator();
-		while (it.hasNext())
-		{
+		while (it.hasNext()) {
 			Attack a = it.next();
 			a.nextCycle();
-			if (a.endOfLife())
-			{
+			if (a.endOfLife()) {
 				it.remove();
 			}
 		}
@@ -117,14 +136,12 @@ public class GameState {
 	}
 
 	public boolean collidesWithOthers(GameCharacter gameCharacter, Rectangle2D newPosColBox) {
-		Set<GameCharacter> others = allCharacters.stream().filter(o -> o!=gameCharacter).collect(Collectors.toSet());
-		
-		for (GameCharacter o: others)
-		{
-			if (newPosColBox.intersects(o.getCurrentCollisionBox()))
-					{
+		Set<GameCharacter> others = allCharacters.stream().filter(o -> o != gameCharacter).collect(Collectors.toSet());
+
+		for (GameCharacter o : others) {
+			if (newPosColBox.intersects(o.getCurrentCollisionBox())) {
 				return true;
-					}
+			}
 		}
 		return false;
 	}
@@ -137,7 +154,6 @@ public class GameState {
 	public void addAttack(Attack attack) {
 		this.attacks.add(attack);
 	}
-
 
 	public boolean canWalk(Rectangle2D colbox) {
 		return bigMap.canWalk(colbox);

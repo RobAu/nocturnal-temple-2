@@ -125,6 +125,11 @@ public abstract class GameCharacter implements GameObject {
 
 	}
 
+	public Action getAction()
+	{
+		return action;
+	}
+	
 	public void setAction(Action a) {
 		if (action != Action.SLASH && a == Action.SLASH) {
 			slashCycle = 0;

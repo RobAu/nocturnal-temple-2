@@ -31,23 +31,23 @@ public class Skeleton extends GameCharacter {
 	@Override
 	public void nextCycle() {
 	
-		setAction(Action.WALK);
-		if (lx<0)
-		{
-			setDirection(Direction.RIGHT);
-		}
-		if (lx>640)
-		{
-			setDirection(Direction.LEFT);
-		}
-		if (ly<0)
-		{
-			setDirection(Direction.DOWN);
-		}
-		if (ly>250)
-		{
-			setDirection(Direction.UP);
-		}
+//		setAction(Action.WALK);
+//		if (lx<0)
+//		{
+//			setDirection(Direction.RIGHT);
+//		}
+//		if (lx>640)
+//		{
+//			setDirection(Direction.LEFT);
+//		}
+//		if (ly<0)
+//		{
+//			setDirection(Direction.DOWN);
+//		}
+//		if (ly>250)
+//		{
+//			setDirection(Direction.UP);
+//		}
 		
 		super.nextCycle();
 	}

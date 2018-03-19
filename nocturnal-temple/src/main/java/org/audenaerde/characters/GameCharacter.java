@@ -121,7 +121,7 @@ public abstract class GameCharacter implements GameObject {
 	private boolean isValid(int nx, int ny) {
 
 		Rectangle2D colbox = getCollisionBox(nx, ny);
-		return state.getScreenBox().contains(colbox) && !state.collidesWithOthers(this, colbox);
+		return state.getScreenBox().contains(colbox) && !state.collidesWithOthers(this, colbox) && state.canWalk(colbox);
 
 	}
 

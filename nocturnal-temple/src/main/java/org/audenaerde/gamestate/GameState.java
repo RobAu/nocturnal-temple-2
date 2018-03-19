@@ -20,7 +20,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class GameState {
 
-	BigMap bigMap = new BigMap();
+	BigMap bigMap = new BigMap(this);
 	List<GameCharacter> allCharacters;
 	List<Attack> attacks;
 
@@ -38,8 +38,8 @@ public class GameState {
 
 		attacks  = new ArrayList<>();
 		allCharacters = new ArrayList<>();
-		allCharacters.add(man);
-		allCharacters.add(skeleton);
+		allCharacters.add(man.setPos(100, 200));
+		allCharacters.add(skeleton.setPos(100, 300));
 		allCharacters.add( new Dummy(this).setPos(200,140));
 		allCharacters.add( new Dummy(this).setPos(200,200));
 		allCharacters.add( new Dummy(this).setPos(200,260));
@@ -128,6 +128,11 @@ public class GameState {
 
 	public void addAttack(Attack attack) {
 		this.attacks.add(attack);
+	}
+
+
+	public boolean canWalk(Rectangle2D colbox) {
+		return bigMap.canWalk(colbox);
 	}
 
 }

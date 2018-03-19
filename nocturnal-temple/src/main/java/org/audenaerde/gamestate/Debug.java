@@ -6,6 +6,7 @@ public class Debug {
 	private boolean aboxes = false;
 
 	private boolean terrain = true;
+	private boolean walkableTerrain = false;
 	
 	public boolean isTerrain() {
 		return terrain;
@@ -31,6 +32,15 @@ public class Debug {
 
 	public boolean getAttackBoxes() {
 		return aboxes;
+	}
+
+	public void toggleWalkableTerrain() {
+		this.walkableTerrain = !this.walkableTerrain;
+	}
+
+
+	public boolean isWalkableTerrain() {
+		return walkableTerrain;
 	}
 	
 }

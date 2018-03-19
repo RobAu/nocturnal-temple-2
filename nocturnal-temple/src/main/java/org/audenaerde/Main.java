@@ -138,6 +138,10 @@ public class Main extends Application {
 				event.consume();
 				gameState.getDebug().toggleAttackBoxes();
 				break;
+			case W:
+				event.consume();
+				gameState.getDebug().toggleWalkableTerrain();
+				break;
 			case SPACE:
 				event.consume();
 				curCharacter.setAction(Action.SLASH);

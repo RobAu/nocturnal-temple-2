@@ -85,23 +85,24 @@ public class GameState {
 
 		updateAttacks();
 
-		for (GameCharacter c : allCharacters) {
+		for (Iterator<GameCharacter> cit = allCharacters.iterator(); cit.hasNext();) {
 
+			GameCharacter c= cit.next();
 			// check if hit by an attack?
 			for (Attack a : attacks) {
 				if (a.getCurrentCollisionBox().intersects(c.getCurrentCollisionBox())) {
 					if (a.getOwner() != c) {
 						
-						if (c.getAction() != Action.WALK_IN_PLACE)
-							hits.add(new AmountHit(this, c));
-
-						c.setAction(Action.WALK_IN_PLACE);
-
+					
+						c.takeHit(10);
 					}
 				}
 			}
-
 			c.nextCycle();
+			if (c.endOfLife())
+			{
+				cit.remove();
+			}
 		}
 
 		updateEffects();
@@ -157,6 +158,10 @@ public class GameState {
 
 	public boolean canWalk(Rectangle2D colbox) {
 		return bigMap.canWalk(colbox);
+	}
+
+	public void addHit(AmountHit amountHit) {
+		this.hits.add(amountHit);
 	}
 
 }

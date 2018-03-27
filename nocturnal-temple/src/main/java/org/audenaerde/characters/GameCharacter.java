@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.audenaerde.Main;
 import org.audenaerde.attacks.SlashAttack;
+import org.audenaerde.characters.GameCharacter.Action;
+import org.audenaerde.effects.AmountHit;
 import org.audenaerde.gamestate.GameState;
 
 import javafx.geometry.Rectangle2D;
@@ -24,7 +26,7 @@ public abstract class GameCharacter implements GameObject {
 	private static final int CHARACTER_TILE_SIZE = 64;
 
 	public enum Action {
-		REST, WALK, SLASH, WALK_IN_PLACE;
+		REST, WALK, SLASH, HIT, DIE;
 	};
 
 	public enum Direction {
@@ -46,7 +48,9 @@ public abstract class GameCharacter implements GameObject {
 	Direction d = Direction.UP;
 	private int walkCycle = 1;
 	private int slashCycle = 0;
-	private int hitCycle = 0;
+	private int dieCycle = 0;
+	
+	public int hp = 100;
 
 	GameState state;
 
@@ -69,12 +73,16 @@ public abstract class GameCharacter implements GameObject {
 
 	public void nextCycle() {
 
-		if (action == Action.WALK_IN_PLACE) {
+		if (action == Action.HIT) {
 			if (walkCycle == 8) {
 				action = Action.REST;
 			}
 		}
-		if (action == Action.WALK || action == Action.WALK_IN_PLACE) {
+		if (action == Action.DIE)
+		{
+			dieCycle++;
+		}
+		if (action == Action.WALK || action == Action.HIT) {
 			walkCycle = (walkCycle % 8) + 1;
 			int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
 
@@ -143,10 +151,15 @@ public abstract class GameCharacter implements GameObject {
 			walkCycle = 1;
 			this.action = Action.WALK;
 		}
-		if (action != Action.WALK_IN_PLACE && a == Action.WALK_IN_PLACE) {
+		if (action != Action.HIT && a == Action.HIT) {
 			walkCycle = 1;
-			this.action = Action.WALK_IN_PLACE;
+			this.action = Action.HIT;
 		}
+		if (action != Action.DIE && a == Action.DIE) {
+			dieCycle = 0;
+			this.action = Action.DIE;
+		}
+
 	}
 
 	public void setDirection(Direction newDirection) {
@@ -175,9 +188,12 @@ public abstract class GameCharacter implements GameObject {
 		} else if (action == Action.SLASH) {
 			tx = CHARACTER_TILE_SIZE * slashCycle;
 			ty = CHARACTER_TILE_SIZE * (12 + d.getRow());
-		} else if (action == Action.WALK || action == Action.WALK_IN_PLACE) {
+		} else if (action == Action.WALK || action == Action.HIT) {
 			tx = CHARACTER_TILE_SIZE * walkCycle;
 			ty = CHARACTER_TILE_SIZE * (8 + d.getRow());
+		} else if (action == Action.DIE ) {
+			tx = CHARACTER_TILE_SIZE * dieCycle;
+			ty = CHARACTER_TILE_SIZE * (20 + d.getRow());
 		}
 
 		for (Image i : getImages()) {
@@ -219,5 +235,25 @@ public abstract class GameCharacter implements GameObject {
 	public int getDrawOrderIndex()
 	{
 		return (int) getCurrentCollisionBox().getMaxY();
+	}
+	public boolean endOfLife() {
+		return this.hp<=0 && dieCycle>=6;
+	}
+
+	public void takeHit(int i) {
+		if (this.getAction() == Action.HIT || this.getAction() == Action.DIE)
+		{
+			return;
+		}
+		getGameState().addHit(new AmountHit(getGameState(), this));	
+		hp -= i;
+		if (hp>0)
+		{
+			this.setAction(Action.HIT);
+		} else
+		{
+			this.setAction(Action.DIE);
+		}
+		
 	}
 }

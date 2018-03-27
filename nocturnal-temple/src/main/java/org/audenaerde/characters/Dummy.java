@@ -39,7 +39,7 @@ public class Dummy extends GameCharacter {
 	
 	@Override
 	public void setAction(Action a) {
-		if (a==Action.WALK_IN_PLACE)
+		if (a==Action.HIT)
 			spinSound.play();
 		super.setAction(a);
 	}

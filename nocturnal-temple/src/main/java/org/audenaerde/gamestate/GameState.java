@@ -85,6 +85,19 @@ public class GameState {
 
 		updateAttacks();
 
+		processHits();
+
+		updateEffects();
+
+		//spawn new skeletons ;)
+		
+		if (allCharacters.size()<3)
+		{
+			allCharacters.add(new Skeleton(this).setPos(220, 220));
+		}
+	}
+
+	private void processHits() {
 		for (Iterator<GameCharacter> cit = allCharacters.iterator(); cit.hasNext();) {
 
 			GameCharacter c= cit.next();
@@ -104,9 +117,6 @@ public class GameState {
 				cit.remove();
 			}
 		}
-
-		updateEffects();
-
 	}
 
 	private void updateEffects() {

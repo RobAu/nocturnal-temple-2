@@ -50,7 +50,7 @@ public abstract class GameCharacter implements GameObject {
 	private int slashCycle = 0;
 	private int dieCycle = 0;
 	
-	public int hp = 100;
+	public int hp = 20;
 
 	GameState state;
 

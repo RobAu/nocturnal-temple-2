@@ -1,20 +1,18 @@
 package org.audenaerde.characters;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.audenaerde.Main;
 import org.audenaerde.gamestate.GameState;
+import org.audenaerde.sounds.Sounds;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
-import javafx.scene.media.AudioClip;
 
 public class Dummy extends GameCharacter {
 	
-	static URL soundSourceResource = Main.class.getResource("/spin.wav");
-	static AudioClip spinSound = new AudioClip(soundSourceResource.toExternalForm());
+	
 	
 	static Image image = new Image(Main.class.getResourceAsStream("/body/male/dummy.png"));
 
@@ -40,7 +38,9 @@ public class Dummy extends GameCharacter {
 	@Override
 	public void setAction(Action a) {
 		if (a==Action.HIT)
-			spinSound.play();
+			Sounds.SPIN.play();
+		if (a==Action.DIE)
+			Sounds.COLLAPSE.play();
 		super.setAction(a);
 	}
 	

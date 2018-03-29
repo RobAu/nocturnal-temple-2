@@ -39,7 +39,13 @@ public class Skeleton extends GameCharacter {
 
 	@Override
 	public void nextCycle() {
-	
+		
+		if (action == Action.REST)
+		{
+			setAction(Action.WALK);
+		}
+		
+		
 //		setAction(Action.WALK);
 //		if (lx<0)
 //		{

@@ -28,8 +28,6 @@ public class Dummy extends GameCharacter {
 		setAction(Action.REST);
 		setDirection(Direction.UP);
 	
-		lx=200;
-		ly=200;
 	}
 	public Rectangle2D getCollisionBox(int px, int py) {
 		return new Rectangle2D(px + 12, py + 48, 64 - 12 * 2, 16);

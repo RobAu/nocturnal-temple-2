@@ -1,11 +1,11 @@
 package org.audenaerde.characters;
 
+import java.awt.Point;
 import java.net.URL;
 import java.util.List;
 
 import org.audenaerde.Main;
 import org.audenaerde.attacks.SlashAttack;
-import org.audenaerde.characters.GameCharacter.Action;
 import org.audenaerde.effects.AmountHit;
 import org.audenaerde.gamestate.GameState;
 
@@ -59,15 +59,14 @@ public abstract class GameCharacter implements GameObject {
 	}
 
 	public int getLx() {
-		return lx;
+		return loc.x;
 	}
 
 	public int getLy() {
-		return ly;
+		return loc.y;
 	}
-
-	int lx = 100;
-	int ly = 100;
+	Point loc = new Point(100,100);
+	
 
 	public abstract List<Image> getImages();
 
@@ -84,30 +83,11 @@ public abstract class GameCharacter implements GameObject {
 		}
 		if (action == Action.WALK || action == Action.HIT) {
 			walkCycle = (walkCycle % 8) + 1;
-			int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
-
-			// we need to check if we can actually go there
-			int nx = lx;
-			int ny = ly;
-
-			switch (d) {
-			case DOWN:
-				ny += pixelsPerStep;
-				break;
-			case LEFT:
-				nx -= pixelsPerStep;
-				break;
-			case RIGHT:
-				nx += pixelsPerStep;
-				break;
-			case UP:
-				ny -= pixelsPerStep;
-				break;
-
-			}
-			if (isValid(nx, ny)) {
-				lx = nx;
-				ly = ny;
+			
+			Point newLoc = getNewLocation();
+			
+			if (isValid(newLoc)) {
+				loc.setLocation(newLoc);
 			}
 		}
 		if (action == Action.SLASH) {
@@ -126,9 +106,33 @@ public abstract class GameCharacter implements GameObject {
 
 	}
 
-	private boolean isValid(int nx, int ny) {
+	private Point getNewLocation() {
+		int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
 
-		Rectangle2D colbox = getCollisionBox(nx, ny);
+		// we need to check if we can actually go there
+		Point newLoc = new Point(loc);
+
+		switch (d) {
+		case DOWN:
+			newLoc.translate(0, pixelsPerStep);
+			break;
+		case LEFT:
+			newLoc.translate(-pixelsPerStep,0);
+			break;
+		case RIGHT:
+			newLoc.translate(pixelsPerStep,0);
+			break;
+		case UP:
+			newLoc.translate(0, -pixelsPerStep);
+			break;
+
+		}
+		return newLoc;
+	}
+
+	private boolean isValid(Point newLoc) {
+
+		Rectangle2D colbox = getCollisionBox(newLoc);
 		return state.getScreenBox().contains(colbox) && !state.collidesWithOthers(this, colbox) && state.canWalk(colbox);
 
 	}
@@ -167,8 +171,8 @@ public abstract class GameCharacter implements GameObject {
 
 	}
 
-	public Rectangle2D getCollisionBox(int px, int py) {
-		return new Rectangle2D(px + 16, py + 48, 64 - 16 * 2, 16);
+	public Rectangle2D getCollisionBox(Point p) {
+		return new Rectangle2D(p.x + 16, p.y + 48, 64 - 16 * 2, 16);
 	}
 
 	public void draw(GraphicsContext gc) {
@@ -197,7 +201,7 @@ public abstract class GameCharacter implements GameObject {
 		}
 
 		for (Image i : getImages()) {
-			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, lx, ly, CHARACTER_TILE_SIZE,
+			gc.drawImage(i, tx, ty, CHARACTER_TILE_SIZE, CHARACTER_TILE_SIZE, getLx(), getLy(), CHARACTER_TILE_SIZE,
 					CHARACTER_TILE_SIZE);
 
 		}
@@ -209,13 +213,13 @@ public abstract class GameCharacter implements GameObject {
 			gc.setStroke(Color.BLUE);
 			gc.setLineWidth(2);
 
-			Rectangle2D cbox = getCollisionBox(lx, ly);
+			Rectangle2D cbox = getCollisionBox(loc);
 			gc.strokeRect(cbox.getMinX(), cbox.getMinY(), cbox.getWidth(), cbox.getHeight());
 		}
 	}
 
 	public Rectangle2D getCurrentCollisionBox() {
-		return getCollisionBox(lx, ly);
+		return getCollisionBox(loc);
 	}
 
 	public Direction getDirection() {
@@ -227,8 +231,7 @@ public abstract class GameCharacter implements GameObject {
 	}
 
 	public GameCharacter setPos(int newLx, int newLy) {
-		lx = newLx;
-		ly = newLy;
+		loc.setLocation(newLx, newLy);
 		return this;
 	}
 

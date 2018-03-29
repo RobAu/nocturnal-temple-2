@@ -29,7 +29,7 @@ public class Man extends GameCharacter {
 
 	public Man(GameState state) {
 		super(state);
-		this.lx=400;
+		loc.setLocation(200,400);
 	}
 
 	@Override

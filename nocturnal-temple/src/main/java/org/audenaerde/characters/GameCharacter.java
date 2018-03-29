@@ -42,6 +42,23 @@ public abstract class GameCharacter implements GameObject {
 		public int getRow() {
 			return this.row;
 		}
+
+		public Direction next() {
+			switch(this)
+			{
+			case DOWN:
+				return LEFT;
+			case LEFT:
+				return UP;
+			case UP:
+				return RIGHT;
+			case RIGHT:
+				return DOWN;
+			default:
+				return Direction.RIGHT;
+			
+			}
+		}
 	};
 
 	Action action = Action.REST;
@@ -106,7 +123,7 @@ public abstract class GameCharacter implements GameObject {
 
 	}
 
-	private Point getNewLocation() {
+	protected Point getNewLocation() {
 		int pixelsPerStep = (action == Action.WALK) ? 4 : 0;
 
 		// we need to check if we can actually go there
@@ -130,7 +147,7 @@ public abstract class GameCharacter implements GameObject {
 		return newLoc;
 	}
 
-	private boolean isValid(Point newLoc) {
+	protected boolean isValid(Point newLoc) {
 
 		Rectangle2D colbox = getCollisionBox(newLoc);
 		return state.getScreenBox().contains(colbox) && !state.collidesWithOthers(this, colbox) && state.canWalk(colbox);

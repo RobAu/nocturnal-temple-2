@@ -1,5 +1,7 @@
 package org.audenaerde.characters;
 
+import java.awt.Point;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +46,14 @@ public class Skeleton extends GameCharacter {
 		{
 			setAction(Action.WALK);
 		}
+		Point newLoc = getNewLocation();
 		
-		
+		for (int i=0; i<4 && !isValid(newLoc); i++)
+		if (!isValid(newLoc))
+		{
+			d = d.next();
+			newLoc = getNewLocation();
+		}
 //		setAction(Action.WALK);
 //		if (lx<0)
 //		{

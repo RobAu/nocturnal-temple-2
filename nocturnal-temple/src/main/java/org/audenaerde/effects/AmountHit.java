@@ -41,7 +41,7 @@ public class AmountHit implements GameObject{
 	@Override
 	public void draw(GraphicsContext gc) {
 		gc.setFill(Color.RED);
-		gc.setFont(Font.font("Ubuntu", FontWeight.EXTRA_BOLD, 16));
+		gc.setFont(Font.font("Ubuntu", FontWeight.EXTRA_BOLD, 26));
 		gc.fillText("-10 HP", lx, ly);
 		gc.setStroke(Color.BLACK);
 		gc.strokeText("-10 HP", lx, ly);
